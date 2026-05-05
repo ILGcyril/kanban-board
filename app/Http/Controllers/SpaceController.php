@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreSpaceRequest;
 use App\Http\Requests\UpdateSpaceRequest;
+use App\Models\Board;
 use Illuminate\Http\Request;
 use App\Models\Space;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Support\Facades\DB;
 
 class SpaceController extends Controller
 {
@@ -27,13 +29,22 @@ class SpaceController extends Controller
     {
         $data = $request->validated();
 
-        Space::create([
-            'name' => $data['name'],
-            'description' => $data['description'],
-            'user_id' => auth()->id()
-        ]);
+        $models = DB::transaction(function() use ($data) {
+            $space = Space::create([
+                'name' => $data['name'],
+                'description' => $data['description'],
+                'user_id' => auth()->id()
+            ]);
 
-        return redirect()->route('spaces.index');
+            $board = Board::create([
+                'name' => 'Главная доска',
+                'space_id' => $space->id
+            ]);
+
+            return ['space' => $space, 'board' => $board];
+        });
+
+        return redirect()->route('boards.show', ['space' => $models['space']->id, 'board' => $models['board']->id]);
     }
 
     public function show(Space $space)
