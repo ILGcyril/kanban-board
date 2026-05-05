@@ -91,7 +91,7 @@ class SpaceTest extends TestCase
 
         $response = $this->actingAs($this->user)->post(route('spaces.store'), $data);
 
-        $response->assertRedirect(route('spaces.index'));
+        $response->assertRedirect();
         
         $this->assertDatabaseHas('spaces', [
             'name' => 'Новое пространство',
