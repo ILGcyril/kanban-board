@@ -3,6 +3,7 @@
 use App\Http\Controllers\BoardController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SpaceController;
+use App\Http\Controllers\TagController;
 use App\Http\Controllers\TaskController;
 use Illuminate\Support\Facades\Route;
 
@@ -26,6 +27,11 @@ Route::middleware('auth')->group(function () {
     //tasks routes
     Route::resource('/space/{space}/{board}/tasks', TaskController::class)->only(['store', 'update', 'destroy']);
     Route::post('/tasks/sort', [TaskController::class, 'sort'])->name('tasks.sort');
+
+    //tags routes
+    Route::post('/spaces/{space}/tags', [TagController::class, 'store'])->name('tags.store');
+    Route::put('/spaces/{space}/tags/{tag}', [TagController::class, 'update'])->name('tags.update');
+    Route::delete('/spaces/{space}/tags/{tag}', [TagController::class, 'destroy'])->name('tags.destroy');
 });
 
 require __DIR__.'/auth.php';

@@ -38,10 +38,11 @@ class BoardController extends Controller
     public function show(Space $space, Board $board)
     {
         $this->authorize('view', $board);
-
+        
         $tasks = $board->tasks()->orderBy('order_column')->get()->groupBy('status');
+        $tags = $space->tags()->get();
 
-        return view('boards.show', compact('space', 'board', 'tasks'));
+        return view('boards.show', compact('space', 'board', 'tasks', 'tags'));
     }
 
     public function update(UpdateBoardRequest $request, Space $space, Board $board)

@@ -17,6 +17,15 @@
                 <a href="{{ route('boards.create', ['space' => $space->id]) }}" class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition duration-150 ease-in-out shadow-sm text-sm font-medium">
                     + Новая доска
                 </a>
+
+                <button onclick="document.getElementById('modal-tags').classList.remove('hidden')" 
+                        class="px-3 py-2 bg-white border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition shadow-sm text-sm font-medium flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9.568 3H5.25A2.25 2.25 0 003 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a4.5 4.5 0 001.242-1.242l3.28-3.28a2.25 2.25 0 000-3.182l-9.581-9.581a2.25 2.25 0 00-1.591-.659z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 6h.008v.008H6V6z" />
+                    </svg>
+                    Теги
+                </button>
             </div>
         </div>
     </x-slot>
@@ -124,6 +133,17 @@
                                     >
                                         <h4 class="text-sm font-medium text-gray-900 break-words pr-6">{{ $task->title }}</h4>
 
+                                        @if($task->tags->isNotEmpty())
+                                            <div class="flex flex-wrap gap-1 mt-2">
+                                                @foreach($task->tags as $tag)
+                                                    <span class="text-[10px] px-1.5 py-0.5 rounded-md text-white font-medium shadow-sm" 
+                                                        style="background-color: {{ $tag->color }}">
+                                                        {{ $tag->name }}
+                                                    </span>
+                                                @endforeach
+                                            </div>
+                                        @endif
+
                                         
                                             <!-- Вывод описания (если есть) -->
                                         @if($task->description)
@@ -173,6 +193,31 @@
                                                         </select>
                                                     </div>
 
+                                                    <div class="mb-4">
+                                                        <label class="block text-gray-700 text-sm font-bold mb-2">Теги</label>
+                                                        
+                                                        @if($tags->isEmpty())
+                                                            <p class="text-xs text-gray-500 italic">Нет созданных тегов. Создайте их через настройки пространства.</p>
+                                                        @else
+                                                            <div class="flex flex-wrap gap-2 max-h-32 overflow-y-auto border p-2 rounded bg-gray-50">
+                                                                @foreach($tags as $tag)
+                                                                    <label class="inline-flex items-center cursor-pointer hover:bg-gray-100 p-1 rounded transition">
+                                                                        <input type="checkbox" 
+                                                                            name="tags[]" 
+                                                                            value="{{ $tag->id }}" 
+                                                                            class="form-checkbox h-4 w-4 text-indigo-600 rounded border-gray-300 focus:ring-indigo-500"
+                                                                            {{ $task->tags->contains($tag->id) ? 'checked' : '' }}>
+                                                                        
+                                                                        <span class="ml-2 text-xs font-medium px-2 py-0.5 rounded-full text-white" 
+                                                                            style="background-color: {{ $tag->color }}">
+                                                                            {{ $tag->name }}
+                                                                        </span>
+                                                                    </label>
+                                                                @endforeach
+                                                            </div>
+                                                        @endif
+                                                    </div>
+
                                                     <div class="items-center px-4 py-3 flex justify-end space-x-2">
                                                         <button type="button" onclick="document.getElementById('modal-task-{{ $task->id }}').classList.add('hidden')" class="px-4 py-2 bg-gray-100 text-gray-700 text-base font-medium rounded-md hover:bg-gray-200 focus:outline-none">
                                                             Отмена
@@ -216,6 +261,17 @@
                                         class="relative w-full bg-white p-3 rounded-lg shadow-sm hover:shadow-md transition group cursor-pointer border-l-4 border-yellow-500 mb-2"
                                     >
                                         <h4 class="text-sm font-medium text-gray-900 break-words pr-6">{{ $task->title }}</h4>
+
+                                        @if($task->tags->isNotEmpty())
+                                            <div class="flex flex-wrap gap-1 mt-2">
+                                                @foreach($task->tags as $tag)
+                                                    <span class="text-[10px] px-1.5 py-0.5 rounded-md text-white font-medium shadow-sm" 
+                                                        style="background-color: {{ $tag->color }}">
+                                                        {{ $tag->name }}
+                                                    </span>
+                                                @endforeach
+                                            </div>
+                                        @endif
                                         
                                         @if($task->description)
                                             <p class="text-xs text-gray-500 mt-1 line-clamp-2 break-words">
@@ -262,6 +318,31 @@
                                                             <option value="in_progress" {{ $task->status == 'in_progress' ? 'selected' : '' }}>In Progress</option>
                                                             <option value="done" {{ $task->status == 'done' ? 'selected' : '' }}>Done</option>
                                                         </select>
+                                                    </div>
+
+                                                    <div class="mb-4">
+                                                        <label class="block text-gray-700 text-sm font-bold mb-2">Теги</label>
+                                                        
+                                                        @if($tags->isEmpty())
+                                                            <p class="text-xs text-gray-500 italic">Нет созданных тегов. Создайте их через настройки пространства.</p>
+                                                        @else
+                                                            <div class="flex flex-wrap gap-2 max-h-32 overflow-y-auto border p-2 rounded bg-gray-50">
+                                                                @foreach($tags as $tag)
+                                                                    <label class="inline-flex items-center cursor-pointer hover:bg-gray-100 p-1 rounded transition">
+                                                                        <input type="checkbox" 
+                                                                            name="tags[]" 
+                                                                            value="{{ $tag->id }}" 
+                                                                            class="form-checkbox h-4 w-4 text-indigo-600 rounded border-gray-300 focus:ring-indigo-500"
+                                                                            {{ $task->tags->contains($tag->id) ? 'checked' : '' }}>
+                                                                        
+                                                                        <span class="ml-2 text-xs font-medium px-2 py-0.5 rounded-full text-white" 
+                                                                            style="background-color: {{ $tag->color }}">
+                                                                            {{ $tag->name }}
+                                                                        </span>
+                                                                    </label>
+                                                                @endforeach
+                                                            </div>
+                                                        @endif
                                                     </div>
 
                                                     <div class="items-center px-4 py-3 flex justify-end space-x-2">
@@ -307,6 +388,17 @@
                                         class="relative w-full bg-white p-3 rounded-lg shadow-sm hover:shadow-md transition group cursor-pointer border-l-4 border-green-500 mb-2 opacity-75 hover:opacity-100"
                                     >
                                         <h4 class="text-sm font-medium text-gray-900 break-words pr-6 line-through decoration-gray-400">{{ $task->title }}</h4>
+
+                                        @if($task->tags->isNotEmpty())
+                                            <div class="flex flex-wrap gap-1 mt-2">
+                                                @foreach($task->tags as $tag)
+                                                    <span class="text-[10px] px-1.5 py-0.5 rounded-md text-white font-medium shadow-sm" 
+                                                        style="background-color: {{ $tag->color }}">
+                                                        {{ $tag->name }}
+                                                    </span>
+                                                @endforeach
+                                            </div>
+                                        @endif
                                         
                                         @if($task->description)
                                             <p class="text-xs text-gray-500 mt-1 line-clamp-2 break-words">
@@ -355,6 +447,31 @@
                                                         </select>
                                                     </div>
 
+                                                    <div class="mb-4">
+                                                        <label class="block text-gray-700 text-sm font-bold mb-2">Теги</label>
+                                                        
+                                                        @if($tags->isEmpty())
+                                                            <p class="text-xs text-gray-500 italic">Нет созданных тегов. Создайте их через настройки пространства.</p>
+                                                        @else
+                                                            <div class="flex flex-wrap gap-2 max-h-32 overflow-y-auto border p-2 rounded bg-gray-50">
+                                                                @foreach($tags as $tag)
+                                                                    <label class="inline-flex items-center cursor-pointer hover:bg-gray-100 p-1 rounded transition">
+                                                                        <input type="checkbox" 
+                                                                            name="tags[]" 
+                                                                            value="{{ $tag->id }}" 
+                                                                            class="form-checkbox h-4 w-4 text-indigo-600 rounded border-gray-300 focus:ring-indigo-500"
+                                                                            {{ $task->tags->contains($tag->id) ? 'checked' : '' }}>
+                                                                        
+                                                                        <span class="ml-2 text-xs font-medium px-2 py-0.5 rounded-full text-white" 
+                                                                            style="background-color: {{ $tag->color }}">
+                                                                            {{ $tag->name }}
+                                                                        </span>
+                                                                    </label>
+                                                                @endforeach
+                                                            </div>
+                                                        @endif
+                                                    </div>
+
                                                     <div class="items-center px-4 py-3 flex justify-end space-x-2">
                                                         <button type="button" onclick="document.getElementById('modal-task-{{ $task->id }}').classList.add('hidden')" class="px-4 py-2 bg-gray-100 text-gray-700 text-base font-medium rounded-md hover:bg-gray-200 focus:outline-none">
                                                             Отмена
@@ -387,6 +504,68 @@
         </div>
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
+
+<!-- МОДАЛЬНОЕ ОКНО УПРАВЛЕНИЯ ТЕГАМИ -->
+<div id="modal-tags" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50 flex items-center justify-center backdrop-blur-sm">
+    <div class="relative mx-auto p-6 border w-[500px] shadow-lg rounded-lg bg-white">
+        
+        <div class="flex justify-between items-center mb-4">
+            <h3 class="text-lg font-bold text-gray-900">Управление тегами</h3>
+            <button onclick="document.getElementById('modal-tags').classList.add('hidden')" class="text-gray-400 hover:text-gray-600">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+        </div>
+
+        <!-- Форма создания нового тега -->
+        <form action="{{ route('tags.store', $space) }}" method="POST" class="mb-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
+            @csrf
+            <div class="flex gap-2 items-end">
+                <div class="flex-1">
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Новый тег</label>
+                    <input type="text" name="name" placeholder="Название (напр. Баг)" required
+                           class="w-full border-gray-300 rounded-md shadow-sm text-sm focus:border-indigo-500 focus:ring-indigo-500">
+                </div>
+                <div class="w-20">
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Цвет</label>
+                    <input type="color" name="color" value="#3b82f6" 
+                           class="w-full h-9 p-1 border-gray-300 rounded-md shadow-sm cursor-pointer">
+                </div>
+                <button type="submit" class="px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-md hover:bg-indigo-700 shadow-sm">
+                    Добавить
+                </button>
+            </div>
+        </form>
+
+        <!-- Список существующих тегов -->
+        <h4 class="text-sm font-semibold text-gray-700 mb-2">Существующие теги</h4>
+        <div class="grid grid-cols-2 gap-2 max-h-60 overflow-y-auto pr-2">
+            @forelse($tags as $tag)
+                <div class="flex items-center justify-between p-2 border rounded-lg bg-white group">
+                    <div class="flex items-center gap-2">
+                        <span class="w-4 h-4 rounded-full border border-gray-300" style="background-color: {{ $tag->color }}"></span>
+                        <span class="text-sm text-gray-700">{{ $tag->name }}</span>
+                    </div>
+                    
+                    <!-- Форма удаления тега -->
+                    <form action="{{ route('tags.destroy', [$space, $tag]) }}" method="POST" onsubmit="return confirm('Удалить тег? Он исчезнет из всех задач.')">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="text-gray-400 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+                            </svg>
+                        </button>
+                    </form>
+                </div>
+            @empty
+                <p class="text-sm text-gray-500 italic col-span-2">Нет созданных тегов.</p>
+            @endforelse
+        </div>
+
+    </div>
+</div>
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {

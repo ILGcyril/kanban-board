@@ -35,10 +35,20 @@ class TaskController extends Controller
     public function update(UpdateTaskRequest $request, Space $space, Board $board, Task $task)
     {
         $this->authorize('update', $task);
-
+    
         $data = $request->validated();
     
-        $task->update($data);
+        $task->update([
+            'title' => $data['title'],
+            'description' => $data['description'] ?? null,
+            'status' => $data['status'] ?? $task->status,
+        ]);
+    
+        if ($request->has('tags')) {
+            $task->tags()->sync($request->tags);
+        } else {
+            $task->tags()->detach();
+        }
     
         return redirect()->back();
     }
@@ -54,8 +64,6 @@ class TaskController extends Controller
 
     public function sort(Request $request)
     {
-        Log::info('Sort Requerst:', $request->all());
-
         try {
             $request->validate([
                 'items' => 'required|array',

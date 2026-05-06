@@ -25,4 +25,9 @@ class Space extends Model
     {
         return $this->hasMany(Board::class);
     }
+
+    public function tags()
+    {
+        return $this->hasMany(Tag::class);
+    }
 }
